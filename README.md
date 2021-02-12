@@ -10,7 +10,6 @@ flp2midi was made because of the fact the built in exporter for midis in FL Stud
 - Edit Events will not be supported as it's currently undocumented on how they work, making it hard to parse
 
 ## How to use
-(flp2midi requires .net 5.0+ in order to run, you can get the desktop runtime [here](https://dotnet.microsoft.com/download/dotnet/5.0))
 
 - First download the release archive and extract it to where ever you want.
 - Drag and drop the flp you want to extract onto the exe and a console should appear
