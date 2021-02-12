@@ -1,5 +1,10 @@
 #! /bin/bash
 
+echo "Cleaning up old builds..."
+rm -rf bin/x64/Release
+rm -rf bin/Any/Release
+rm -rf obj
+
 echo "Updating externals..."
 git submodule init
 git submodule update
