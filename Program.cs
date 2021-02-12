@@ -35,6 +35,8 @@ namespace flp2midi
 
     static void Main(string[] args)
     {
+      var filePath = args[0];
+
       if(args.Length < 1)
       {
         Console.WriteLine("Usage: flp2midi.exe <path to flp file>");
@@ -46,7 +48,7 @@ namespace flp2midi
       Console.WriteLine("flp2midi | Version: 1.0.0");
       Console.WriteLine("Loading FL Studio project file...");
 
-      Project proj = Project.Load(args[0], false);
+      Project proj = Project.Load(filePath, false);
 
       string title = proj.ProjectTitle;
       string version = proj.VersionString;
@@ -183,7 +185,7 @@ namespace flp2midi
         }
       });
 
-      var writer = new MidiWriter(Path.GetDirectoryName(args[0]) + "\\" + Path.GetFileName(args[0]) + ".mid");
+      var writer = new MidiWriter(Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(filePath) + ".mid"));
       writer.Init((ushort)proj.Ppq);
       writer.InitTrack();
       writer.Write(new TempoEvent(0, (int)(60000000.0 / proj.Tempo)));
