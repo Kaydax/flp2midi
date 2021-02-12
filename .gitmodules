@@ -1,0 +1,6 @@
+[submodule "external/FLParser"]
+	path = external/FLParser
+	url = https://github.com/Kaydax/FLParser.git
+[submodule "external/MIDIModificationFramework"]
+	path = external/MIDIModificationFramework
+	url = https://github.com/arduano/MIDIModificationFramework.git

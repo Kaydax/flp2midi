@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "flp2midi", "flp2midi.csproj", "{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monad.FLParser", "external\FLParser\Monad.FLParser.csproj", "{76DE395B-28ED-4282-A7C8-D68AC00C4E80}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MIDIModificationFramework", "external\MIDIModificationFramework\MIDIModificationFramework.csproj", "{1E140727-3A34-4396-9E7A-BA216A760453}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}.Debug|x64.Build.0 = Debug|Any CPU
+		{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}.Release|x64.ActiveCfg = Release|x64
+		{FBCE6CBE-4161-4BB7-8223-7FC54E49CE6A}.Release|x64.Build.0 = Release|x64
+		{76DE395B-28ED-4282-A7C8-D68AC00C4E80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76DE395B-28ED-4282-A7C8-D68AC00C4E80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76DE395B-28ED-4282-A7C8-D68AC00C4E80}.Debug|x64.ActiveCfg = Debug|x64
+		{76DE395B-28ED-4282-A7C8-D68AC00C4E80}.Debug|x64.Build.0 = Debug|x64
+		{76DE395B-28ED-4282-A7C8-D68AC00C4E80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76DE395B-28ED-4282-A7C8-D68AC00C4E80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76DE395B-28ED-4282-A7C8-D68AC00C4E80}.Release|x64.ActiveCfg = Release|x64
+		{76DE395B-28ED-4282-A7C8-D68AC00C4E80}.Release|x64.Build.0 = Release|x64
+		{1E140727-3A34-4396-9E7A-BA216A760453}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E140727-3A34-4396-9E7A-BA216A760453}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E140727-3A34-4396-9E7A-BA216A760453}.Debug|x64.ActiveCfg = Debug|x64
+		{1E140727-3A34-4396-9E7A-BA216A760453}.Debug|x64.Build.0 = Debug|x64
+		{1E140727-3A34-4396-9E7A-BA216A760453}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E140727-3A34-4396-9E7A-BA216A760453}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E140727-3A34-4396-9E7A-BA216A760453}.Release|x64.ActiveCfg = Release|x64
+		{1E140727-3A34-4396-9E7A-BA216A760453}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4DAFA95-9117-427F-8702-3180A2FE9152}
+	EndGlobalSection
+EndGlobal

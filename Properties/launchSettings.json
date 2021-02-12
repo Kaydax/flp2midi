@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "flp2midi": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Projects\\Random Junk\\Test_FLP\\tempo_edit_event.flp\""
+    }
+  }
+}
