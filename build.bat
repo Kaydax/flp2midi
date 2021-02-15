@@ -11,12 +11,12 @@ git submodule init
 git submodule update
 
 ECHO Building...
-dotnet publish -p:PublishProfile="Windows - Release x64"
-dotnet publish -p:PublishProfile="Windows - Release x86"
-dotnet publish -p:PublishProfile="Windows - Release Arm"
-dotnet publish -p:PublishProfile="Linux - Release x64"
-dotnet publish -p:PublishProfile="Linux - Release Arm"
-dotnet publish -p:PublishProfile="OSX - Release x64"
+dotnet publish -c Release -p:PublishProfile="Windows - Release x64"
+dotnet publish -c Release -p:PublishProfile="Windows - Release x86"
+dotnet publish -c Release -p:PublishProfile="Windows - Release Arm"
+dotnet publish -c Release -p:PublishProfile="Linux - Release x64"
+dotnet publish -c Release -p:PublishProfile="Linux - Release Arm"
+dotnet publish -c Release -p:PublishProfile="OSX - Release x64"
 
 ECHO Archiving...
 7z a -t7z -mmt16 -mx9 .\builds\flp2midi-win-x64.7z .\bin\x64\Release\net5.0\publish\win-x64\*.dll .\bin\x64\Release\net5.0\publish\win-x64\flp2midi.exe

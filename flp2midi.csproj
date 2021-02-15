@@ -28,8 +28,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="builds\**" />
     <Compile Remove="external\**" />
+    <EmbeddedResource Remove="builds\**" />
     <EmbeddedResource Remove="external\**" />
+    <None Remove="builds\**" />
     <None Remove="external\**" />
   </ItemGroup>
 

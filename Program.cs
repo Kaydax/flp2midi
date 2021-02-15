@@ -15,6 +15,9 @@ namespace flp2midi
 {
   class Program
   {
+    static bool ForceColor { get; set; }
+    static bool DisableEcho { get; set; }
+
     //TODO: Actually support feed correctly
     static IEnumerable<Note> EchoNotes(IEnumerable<Note> notes, byte echoamount, uint feed, uint time, int ppq)
     {
@@ -44,8 +47,12 @@ namespace flp2midi
       }
 
       var filePath = args[0];
+      var tempFile = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(filePath) + ".mid.tmp");
+      var streams = new ParallelStream(File.Open(tempFile, FileMode.Create));
 
-      Console.WriteLine("flp2midi | Version: 1.0.0");
+      GetArgs(args);
+
+      Console.WriteLine("flp2midi | Version: 1.1.0");
       Console.WriteLine("Loading FL Studio project file...");
 
       Project proj = Project.Load(filePath, false);
@@ -77,7 +84,7 @@ namespace flp2midi
 
           return c.Value
             .OrderBy(n => n.Position)
-            .Select(n => new Note(colorchan ? n.Color : channel, n.Key, Math.Min((byte)127, n.Velocity), (double)n.Position, (double)n.Position + (double)n.Length))
+            .Select(n => new Note((colorchan || ForceColor) ? n.Color : channel, Math.Min((byte)127, n.Key), Math.Min((byte)127, n.Velocity), (double)n.Position, (double)n.Position + (double)n.Length))
             .ToArray();
         });
 
@@ -91,7 +98,7 @@ namespace flp2midi
 
       var trackID = 0;
 
-      MemoryStream[] streams = new MemoryStream[proj.Tracks.Length];
+      //MemoryStream[] streams = new MemoryStream[proj.Tracks.Length];
 
       var tracks = proj.Tracks.Where(t => t.Items.Count != 0).OrderBy(t =>
         t.Items.Select(i =>
@@ -112,7 +119,7 @@ namespace flp2midi
           4 - Unknown
           5 - Tempo Events
       */
-      
+
       /*
        * Modes:
        * 10 - Smooth
@@ -136,9 +143,10 @@ namespace flp2midi
 
       ParallelFor(0, tracks.Length, Environment.ProcessorCount, new CancellationToken(false), i =>
       {
-        streams[i] = new MemoryStream();
+        //streams[i] = new MemoryStream();
 
-        var trackWriter = new MidiWriter(streams[i]);
+        var stream = new BufferedStream(streams.GetStream(i), 1 << 24);
+        var trackWriter = new MidiWriter(stream);
 
         var track = tracks[i];
 
@@ -160,7 +168,7 @@ namespace flp2midi
 
               if(channel.Data is GeneratorData data)
               {
-                if(data.EchoFeed > 0)
+                if(data.EchoFeed > 0 && !DisableEcho)
                 {
                   shifted = EchoNotes(shifted, data.Echo, data.EchoFeed, data.EchoTime, proj.Ppq);
                 }
@@ -178,12 +186,15 @@ namespace flp2midi
         }).MergeAll().TrimStart();
 
         trackWriter.Write(notes.ExtractEvents());
+        stream.Close();
 
         lock(l)
         {
           Console.WriteLine($"Generated track {i + 1}, {(trackID++) + 1}/{tracks.Length}");
         }
       });
+
+      streams.CloseAllStreams();
 
       var writer = new MidiWriter(Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(filePath) + ".mid"));
       writer.Init((ushort)proj.Ppq);
@@ -195,18 +206,49 @@ namespace flp2midi
       {
         Console.WriteLine($"Writing track {i + 1}/{tracks.Length}");
 
-        streams[i].Position = 0;
+        var stream = streams.GetStream(i, true);
+
+        stream.Position = 0;
         unchecked
         {
-          writer.WriteTrack(streams[i]);
+          writer.WriteTrack(stream);
         }
-        streams[i].Close();
+        stream.Close();
       }
 
       writer.Close();
+      streams.CloseAllStreams();
+      streams.Dispose();
+      File.Delete(tempFile);
 
       Console.WriteLine("Press any key to exit... ");
       Console.ReadKey();
+    }
+
+    static void GetArgs(string[] args)
+    {
+      for(var i = 0; i < args.Length; i++)
+      {
+        switch(args[i])
+        {
+          case "-fc":
+          case "--forcecolor":
+          {
+            ForceColor = true;
+            break;
+          }
+          case "-de":
+          case "--disable-echo":
+          {
+            DisableEcho = true;
+            break;
+          }
+          default:
+          {
+            break;
+          }
+        }
+      }
     }
 
     static void ParallelFor(int from, int to, int threads, CancellationToken cancel, Action<int> func)
@@ -221,9 +263,11 @@ namespace flp2midi
           try
           {
             func(i);
+          }
+          finally
+          {
             completed.Add(i);
           }
-          catch(Exception e) { }
         });
         tasks.Add(i, t);
         t.Start();
