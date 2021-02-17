@@ -38,21 +38,20 @@ namespace flp2midi
 
     static void Main(string[] args)
     {
-      if(args.Length < 1)
+      if(args.Length < 1 || !File.Exists(args[0]))
       {
-        Console.WriteLine("Usage: flp2midi.exe <path to flp file>");
-        Console.WriteLine("Press any key to exit... ");
-        Console.ReadKey();
-        return;
+        PrintHelp();
       }
-
-      var filePath = args[0];
-      var tempFile = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(filePath) + ".mid.tmp");
-      var streams = new ParallelStream(File.Open(tempFile, FileMode.Create));
 
       GetArgs(args);
 
-      Console.WriteLine("flp2midi | Version: 1.1.0");
+      var filePath = args[0];
+      var tempFile = Path.Combine(Path.GetDirectoryName(filePath), Path.GetFileName(filePath) + ".mid.tmp");
+      File.Delete(tempFile); //Delete old temp file if it exist
+      var streams = new ParallelStream(File.Open(tempFile, FileMode.Create));
+
+
+      Console.WriteLine("flp2midi | Version: 1.2.0");
       Console.WriteLine("Loading FL Studio project file...");
 
       Project proj = Project.Load(filePath, false);
@@ -82,10 +81,39 @@ namespace flp2midi
             channel = data.PluginSettings[4];
           }
 
+          var noteList = new List<Note>(c.Value.Count);
+
+          var lastNoteZeroTick = -1.0;
+          foreach(var n in c.Value.OrderBy(n => n.Position))
+          {
+            var newNote = new Note((colorchan || ForceColor) ? n.Color : channel, Math.Min((byte)127, n.Key), Math.Min((byte)127, n.Velocity), (double)n.Position, (double)n.Position + (double)n.Length);
+            noteList.Add(newNote);
+
+            if(lastNoteZeroTick != -1.0 && lastNoteZeroTick != newNote.Start)
+            {
+              lastNoteZeroTick = -1.0;
+              noteList[^2].End = newNote.Start;
+            }
+
+            if(newNote.Length == 0)
+            {
+              lastNoteZeroTick = newNote.Start;
+              newNote.End = double.PositiveInfinity;
+            }
+          }
+
+          return noteList.ToArray();
+
+          /*
           return c.Value
-            .OrderBy(n => n.Position)
-            .Select(n => new Note((colorchan || ForceColor) ? n.Color : channel, Math.Min((byte)127, n.Key), Math.Min((byte)127, n.Velocity), (double)n.Position, (double)n.Position + (double)n.Length))
-            .ToArray();
+              .OrderBy(n => n.Position)
+              .Select(n => new Note((colorchan || ForceColor) ? n.Color : channel, 
+                                  Math.Min((byte)127, n.Key), 
+                                  Math.Min((byte)127, n.Velocity), 
+                                  (double)n.Position, 
+                                  (double)n.Position + (double)n.Length))
+              .ToArray();
+          */
         });
 
         lock(l)
@@ -161,7 +189,7 @@ namespace flp2midi
               var shifted = c.Value
                             .TrimStart(Math.Max(0, item.StartOffset))
                             .TrimEnd(Math.Max(0, item.EndOffset == -1 ? item.Length : item.EndOffset))
-                            .Where(n => n.Length > 0)
+                            //.Where(n => n.Length > 0)
                             .OffsetTime(item.Position - item.StartOffset);
 
               var channel = c.Key;
@@ -225,6 +253,7 @@ namespace flp2midi
       Console.ReadKey();
     }
 
+    //TODO: Abstract console vars
     static void GetArgs(string[] args)
     {
       for(var i = 0; i < args.Length; i++)
@@ -243,12 +272,29 @@ namespace flp2midi
             DisableEcho = true;
             break;
           }
+          case "-h":
+          case "--help":
+          {
+            PrintHelp();
+            break;
+          }
           default:
           {
             break;
           }
         }
       }
+    }
+
+    static void PrintHelp()
+    {
+      Console.WriteLine("Usage: flp2midi.exe <path to flp file>");
+      Console.WriteLine("List of current console vars:" +
+                        "\n-fc | --force-color > Makes all notes map to the color they are mapped to in the pattern than what the MIDI Out channel is set to" +
+                        "\n-de | --disable-echo > Disables the generation of echo notes if echo is enabled on the channel");
+      Console.WriteLine("Press any key to exit... ");
+      Console.ReadKey();
+      System.Environment.Exit(1);
     }
 
     static void ParallelFor(int from, int to, int threads, CancellationToken cancel, Action<int> func)
