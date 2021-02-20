@@ -51,7 +51,7 @@ namespace flp2midi
       var streams = new ParallelStream(File.Open(tempFile, FileMode.Create));
 
 
-      Console.WriteLine("flp2midi | Version: 1.2.0");
+      Console.WriteLine("flp2midi | Version: 1.2.1");
       Console.WriteLine("Loading FL Studio project file...");
 
       Project proj = Project.Load(filePath, false);
