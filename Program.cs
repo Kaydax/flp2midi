@@ -51,7 +51,7 @@ namespace flp2midi
       var streams = new ParallelStream(File.Open(tempFile, FileMode.Create));
 
 
-      Console.WriteLine("flp2midi | Version: 1.2.1");
+      Console.WriteLine("flp2midi | Version: 1.2.2");
       Console.WriteLine("Loading FL Studio project file...");
 
       Project proj = Project.Load(filePath, false);
@@ -75,7 +75,7 @@ namespace flp2midi
           byte channel = 0;
           var colorchan = false;
 
-          if(c.Key.Data is GeneratorData data)
+          if(c.Key.Data is GeneratorData data && data.GeneratorName.ToLower() == "midi out")
           {
             if(data.PluginSettings[29] == 0x01) colorchan = true;
             channel = data.PluginSettings[4];
