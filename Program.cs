@@ -51,7 +51,7 @@ namespace flp2midi
       var streams = new ParallelStream(File.Open(tempFile, FileMode.Create));
 
 
-      Console.WriteLine("flp2midi | Version: 1.2.2");
+      Console.WriteLine("flp2midi | Version: 1.3.0");
       Console.WriteLine("Loading FL Studio project file...");
 
       Project proj = Project.Load(filePath, false);
@@ -128,14 +128,16 @@ namespace flp2midi
 
       //MemoryStream[] streams = new MemoryStream[proj.Tracks.Length];
 
-      var tracks = proj.Tracks.Where(t => t.Items.Count != 0).OrderBy(t =>
-        t.Items.Select(i =>
-        {
-          var pi = i as PatternPlaylistItem;
-          if(pi == null) return 0;
-          return -patternDict[pi.Pattern.Id].Select(p => p.Value.Length).Sum();
-        }).Sum()
-      ).ToArray();
+      //var tracks = proj.Tracks.Where(t => t.Items.Count != 0).OrderBy(t =>
+      //  t.Items.Select(i =>
+      //  {
+      //    var pi = i as PatternPlaylistItem;
+      //    if(pi == null) return 0;
+      //    return -patternDict[pi.Pattern.Id].Select(p => p.Value.Length).Sum();
+      //  }).Sum()
+      //).ToArray();
+
+      var tracks = proj.Tracks.Where(t => t.Items.Count != 0).ToArray();
 
       //var automations = proj.Channels.Where(c => c.Data is AutomationData).ToArray();
 
